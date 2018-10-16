@@ -15,7 +15,7 @@ GROUP BY department_name;
 ![result](https://github.com/fishccc/Oracle/blob/master/test1/1.png)
 
 分析结果：
-
+![result](https://github.com/fishccc/Oracle/blob/master/test1/1-1.png)
 查询二：
 ```SQL
 SELECT d.department_name，count(e.job_id)as "部门总人数"，
@@ -27,9 +27,9 @@ HAVING d.department_name in ('IT'，'Sales');
 ```
 
 运行结果：
-
+![result](https://github.com/fishccc/Oracle/blob/master/test1/2.png)
 分析结果：
-
+![result](https://github.com/fishccc/Oracle/blob/master/test1/2-1.png)
 ## 自己的查询语句
 查询语句：
 ```SQL
