@@ -12,6 +12,7 @@ GROUP BY department_name;
 ```
 运行结果：
 
+![result](https://github.com/fishccc/Oracle/blob/master/test1/1.png ''aa'')
 分析结果：
 
 查询二：
