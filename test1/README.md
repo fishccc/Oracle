@@ -1,6 +1,6 @@
 # Oracle
-## 实验一
-### 教材查询语句
+
+## 教材查询语句
 查询一：
 ```SQL
 SELECT d.department_name，count(e.job_id)as "部门总人数"，
@@ -28,7 +28,7 @@ HAVING d.department_name in ('IT'，'Sales');
 
 分析结果：
 
-### 自己的查询语句
+## 自己的查询语句
 查询语句：
 ```SQL
 
