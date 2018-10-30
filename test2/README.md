@@ -37,7 +37,7 @@ SELECT * FROM myview;
 SQL> SELECT * FROM wyz.myview;
 ```
 结果:
-![result](https://github.com/fishccc/Oracle/blob/master/test2/3.png)
+![result](https://github.com/fishccc/Oracle/blob/master/test2/33.png)
 
 ### 查看数据库的使用情况
 结果:
