@@ -34,7 +34,7 @@ SELECT * FROM myview;
 ### 用户hr连接到pdborcl，查询wyz授予它的视图myview
 代码:
 ```SQL
-SQL> SELECT * FROM new_user.myview;
+SQL> SELECT * FROM wyz.myview;
 ```
 结果:
 ![result](https://github.com/fishccc/Oracle/blob/master/test2/3.png)
