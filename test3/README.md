@@ -1,6 +1,7 @@
 # Oracle
 
 ## 登录自己的账号，创建orders表
+#### 用户名:wyz
 代码：
 ```SQL
 CREATE TABLE ORDERS 
@@ -44,7 +45,7 @@ CREATE TABLE ORDERS
 运行结果：
 ![result](https://github.com/fishccc/Oracle/blob/master/test3/3-1.png)
 
-##创建order_details表
+## 创建order_details表
 
 代码：
 ```SQL
@@ -100,9 +101,9 @@ TABLESPACE USERS03
 运行结果：
 ![result](https://github.com/fishccc/Oracle/blob/master/test3/3-2.png)
 
-##登录system账号
+## 登录system账号
 
-###查看表空间的数据库文件，以及每个文件的磁盘占用情况
+### 查看表空间的数据库文件，以及每个文件的磁盘占用情况
 
 代码：
 ```SQL
