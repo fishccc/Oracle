@@ -201,137 +201,8 @@ ADD CONSTRAINT EMPLOYEES_SALARY CHECK
 ENABLE;
 ```
 
-## 创建PRODUCTS表
-
-代码：
-```sql
-CREATE TABLE PRODUCTS
-(
-  PRODUCT_NAME VARCHAR2(40 BYTE) NOT NULL
-, PRODUCT_TYPE VARCHAR2(40 BYTE) NOT NULL
-, CONSTRAINT PRODUCTS_PK PRIMARY KEY
-  (
-    PRODUCT_NAME
-  )
-  ENABLE
-)
-LOGGING
-TABLESPACE "USERS"
-PCTFREE 10
-INITRANS 1
-STORAGE
-(
-  INITIAL 65536
-  NEXT 1048576
-  MINEXTENTS 1
-  MAXEXTENTS 2147483645
-  BUFFER_POOL DEFAULT
-);
-```
-
-结果：
-![result](https://github.com/fishccc/Oracle/blob/master/test4/product.png)
 
 
-
-## 创建ORDERS表
-代码：
-```sql
-CREATE TABLE ORDERS
-(
-  ORDER_ID NUMBER(10, 0) NOT NULL
-, CUSTOMER_NAME VARCHAR2(40 BYTE) NOT NULL
-, CUSTOMER_TEL VARCHAR2(40 BYTE) NOT NULL
-, ORDER_DATE DATE NOT NULL
-, EMPLOYEE_ID NUMBER(6, 0) NOT NULL
-, DISCOUNT NUMBER(8, 2) DEFAULT 0
-, TRADE_RECEIVABLE NUMBER(8, 2) DEFAULT 0
-)
-TABLESPACE USERS
-PCTFREE 10
-INITRANS 1
-STORAGE
-(
-  BUFFER_POOL DEFAULT
-)
-NOCOMPRESS
-NOPARALLEL
-PARTITION BY RANGE (ORDER_DATE)
-(
-  PARTITION PARTITION_BEFORE_2016 VALUES LESS THAN (TO_DATE(' 2016-01-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
-  NOLOGGING
-  TABLESPACE USERS
-  PCTFREE 10
-  INITRANS 1
-  STORAGE
-  (
-    INITIAL 8388608
-    NEXT 1048576
-    MINEXTENTS 1
-    MAXEXTENTS UNLIMITED
-    BUFFER_POOL DEFAULT
-  )
-  NOCOMPRESS NO INMEMORY
-, PARTITION PARTITION_BEFORE_2017 VALUES LESS THAN (TO_DATE(' 2017-01-01 00:00:00', 'SYYYY-MM-DD HH24:MI:SS', 'NLS_CALENDAR=GREGORIAN'))
-  NOLOGGING
-  TABLESPACE USERS02
-  PCTFREE 10
-  INITRANS 1
-  STORAGE
-  (
-    INITIAL 8388608
-    NEXT 1048576
-    MINEXTENTS 1
-    MAXEXTENTS UNLIMITED
-    BUFFER_POOL DEFAULT
-  )
-  NOCOMPRESS NO INMEMORY
-);
-```
-
-结果：
-![result](https://github.com/fishccc/Oracle/blob/master/test4/order.png)
-
-## 创建本地分区索引ORDERS_INDEX_DATE
-
-代码：
-```sql
-CREATE INDEX ORDERS_INDEX_DATE ON ORDERS (ORDER_DATE ASC)
-LOCAL
-(
-  PARTITION PARTITION_BEFORE_2016
-    TABLESPACE USERS
-    PCTFREE 10
-    INITRANS 2
-    STORAGE
-    (
-      INITIAL 8388608
-      NEXT 1048576
-      MINEXTENTS 1
-      MAXEXTENTS UNLIMITED
-      BUFFER_POOL DEFAULT
-    )
-    NOCOMPRESS
-, PARTITION PARTITION_BEFORE_2017
-    TABLESPACE USERS02
-    PCTFREE 10
-    INITRANS 2
-    STORAGE
-    (
-      INITIAL 8388608
-      NEXT 1048576
-      MINEXTENTS 1
-      MAXEXTENTS UNLIMITED
-      BUFFER_POOL DEFAULT
-    )
-    NOCOMPRESS
-)
-STORAGE
-(
-  BUFFER_POOL DEFAULT
-)
-NOPARALLEL;
-```
 
 ## 录入数据
 
@@ -392,6 +263,10 @@ begin
 end;
 ```
 
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/insert.png)
+
+
 ### 插入DEPARTMENTS，EMPLOYEES数据
 代码：
 ```sql
@@ -419,3 +294,71 @@ INSERT INTO EMPLOYEES(EMPLOYEE_ID,NAME,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,MANAG
 结果：
 ![result](https://github.com/fishccc/Oracle/blob/master/test4/15.png)
 
+## 查询：
+
+### 1.查询某个员工的信息
+
+```sql
+SELECT * FROM EMPLOYEES where EMPLOYEE_ID='1';
+```
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-1.png)
+
+
+
+### 2.查询某个员工及其所有下属，子下属员工
+代码：
+```sql
+WITH A (EMPLOYEE_ID,NAME,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,MANAGER_ID,DEPARTMENT_ID) AS
+  (SELECT EMPLOYEE_ID,NAME,EMAIL,PHONE_NUMBER,HIRE_DATE,SALARY,MANAGER_ID,DEPARTMENT_ID
+    FROM employees WHERE employee_ID = 11
+    UNION ALL
+  SELECT B.EMPLOYEE_ID,B.NAME,B.EMAIL,B.PHONE_NUMBER,B.HIRE_DATE,B.SALARY,B.MANAGER_ID,B.DEPARTMENT_ID
+    FROM A, employees B WHERE A.EMPLOYEE_ID = B.MANAGER_ID)
+SELECT * FROM A;
+--或者
+SELECT * FROM employees START WITH EMPLOYEE_ID = 11 CONNECT BY PRIOR EMPLOYEE_ID = MANAGER_ID;
+```
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-2.png)
+
+### 3.查询订单表，并且包括订单的订单应收货款: Trade_Receivable= sum(订单详单表.ProductNum*订单详单表.ProductPrice)- Discount
+
+代码：
+```sql
+SELECT SUM(A.PRODUCT_NUM*A.PRODUCT_PRICE - B.DISCOUNT) 
+Trade_Receivable from ORDER_DETAILS A ,ORDERS B 
+WHERE A.ORDER_ID=B.ORDER_ID; 
+```
+
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-3.png)
+
+### 4.查询订单详表，要求显示订单的客户名称和客户电话，产品类型用汉字描述
+
+```sql
+SELECT B.CUSTOMER_NAME "客户名称",B.CUSTOMER_TEL "客户电话",C.PRODUCT_TYPE "产品类型" FROM ORDER_DETAILS A,ORDERS B,PRODUCTS C 
+WHERE A.ORDER_ID = B.ORDER_ID AND A.PRODUCT_NAME = C.PRODUCT_NAME;
+```
+
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-4.png)
+
+### 5.查询出所有空订单，即没有订单详单的订单
+```sql
+select * from ORDER_DETAILS m,ORDERS d
+where m.ORDER_ID <> m.ORDER_ID And m.ORDER_ID IS NULL;
+```
+
+结果：
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-5.png)
+
+### 6.查询部门表，同时显示部门的负责人姓名
+```sql
+select m.DEPARTMENT_ID, m.DEPARTMENT_NAME,d.NAME
+from DEPARTMENTS m,EMPLOYEES d
+where m.DEPARTMENT_ID=d.DEPARTMENT_ID AND d.MANAGER_ID IS NULL;
+```
+结果：
+
+![result](https://github.com/fishccc/Oracle/blob/master/test4/select-6.png)
