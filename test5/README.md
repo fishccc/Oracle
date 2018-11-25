@@ -2,7 +2,7 @@
 
 #### 用户名:ujung
 
-## 创建一个包(Package)，包名是MyPack。
+## 1.创建一个包(Package)，包名是MyPack。
 代码：
 ```sql
 create or replace PACKAGE MyPack IS
@@ -20,8 +20,8 @@ END MyPack;
 结果：
 ![result](https://github.com/fishccc/Oracle/blob/master/test5/1.png)
 
-## 在MyPack中创建一个函数SaleAmount ，查询部门表，统计每个部门的销售总金额，每个部门的销售额是由该部门的员工(ORDERS.EMPLOYEE_ID)完成的销售额之和。函数SaleAmount要求输入的参数是部门号，输出部门的销售金额。
-## 在MyPack中创建一个过程，在过程中使用游标，递归查询某个员工及其所有下属，子下属员工。过程的输入参数是员工号，输出员工的ID,姓名，销售总金额。信息用dbms_output包中的put或者put_line函数。输出的员工信息用左添加空格的多少表示员工的层次（LEVEL）。
+## 2.1在MyPack中创建一个函数SaleAmount ，查询部门表，统计每个部门的销售总金额，每个部门的销售额是由该部门的员工(ORDERS.EMPLOYEE_ID)完成的销售额之和。函数SaleAmount要求输入的参数是部门号，输出部门的销售金额。
+## 2.2在MyPack中创建一个过程，在过程中使用游标，递归查询某个员工及其所有下属，子下属员工。过程的输入参数是员工号，输出员工的ID,姓名，销售总金额。信息用dbms_output包中的put或者put_line函数。输出的员工信息用左添加空格的多少表示员工的层次（LEVEL）。
 
 代码：
 ```sql
@@ -57,8 +57,8 @@ END MyPack;
 结果：
 ![result](https://github.com/fishccc/Oracle/blob/master/test5/2.png)
 
-## 测试：
-### 部门11和部门12的销售总额
+## 3.测试：
+### 一.部门11和部门12的销售总额
 
 代码：
 ```sql
@@ -68,7 +68,7 @@ select MyPack.Get_SaleAmount(11) AS 部门11应收金额,MyPack.Get_SaleAmount(1
 结果
 ![result](https://github.com/fishccc/Oracle/blob/master/test5/3.png)
 
-### 查询V_EMPLOYEE_ID = 1 、V_EMPLOYEE_ID = 11及其下属
+### 二.查询V_EMPLOYEE_ID = 1 、V_EMPLOYEE_ID = 11及其下属
 
 代码：
 ```sql
